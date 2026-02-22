@@ -39,11 +39,30 @@ Add the following to your `claude_desktop_config.json` (usually located in `%APP
       "command": "npx",
       "args": ["-y", "suarify-mcp-server"],
       "env": {
-        "SUARIFY_API_KEY": "your_api_key_here"
+        "SUARIFY_API_KEY": "sk_suarify_xxxxx_c2U5vTQ2MEfaMm8Iwa8gwN0l"
       }
     }
   }
 }
+```
+or
+
+```json
+
+{
+  "mcpServers": {
+   "suarify-local": {
+      "command": "node",
+      "args": [
+        "c:/Users/Acer/OneDrive/Documents/GitHub/suarify-mcp/index.js"
+      ],
+      "env": {
+        "SUARIFY_API_KEY": "sk_suarify_xxxxx_c2U5vTQ2MEfaMm8Iwa8gwN0l"
+      }
+    },
+  }
+}
+  
 ```
 
 ### Cursor
