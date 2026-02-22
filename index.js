@@ -31,8 +31,10 @@ if (!API_KEY) {
 }
 
 // --- Server Definition ---
-const mcp = new FastMCP("suarify-mcp-server", {
-    version: "0.1.1"
+const mcp = new FastMCP({
+    name: "suarify-mcp-server",
+    version: "0.1.2",
+    instructions: "This server provides tools for interacting with the Suarify voice calling platform. Use these tools to initiate AI-powered phone calls, manage leads, and configure agent settings. Requires a valid SUARIFY_API_KEY environment variable."
 });
 
 const apiClient = axios.create({

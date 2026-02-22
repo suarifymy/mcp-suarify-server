@@ -19,7 +19,7 @@ This is a Model Context Protocol (MCP) server for Suarify, providing tools for A
 Set the following environment variables:
 
 - `SUARIFY_API_KEY`: (Required) Your API key for authentication.
-- `SUARIFY_BASE_URL`: (Optional) Defaults to `https://suarify1.my`.
+- `SUARIFY_BASE_URL`: (Optional) Defaults to `https://suarify.my`.
 
 ## Setup in AI Clients
 

@@ -1,6 +1,6 @@
 {
   "name": "suarify-mcp-server",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Suarify MCP Server for voice calling and lead management",
   "main": "index.js",
   "type": "module",
