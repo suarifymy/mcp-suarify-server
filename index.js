@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { FastMCP } from "fastmcp";
 import axios, { AxiosError } from "axios";
 import { z } from "zod";
@@ -22,7 +23,7 @@ process.stdout.write = function (chunk) {
     return process.stderr.write.apply(process.stderr, arguments);
 };
 
-const BASE_URL = process.env.SUARIFY_BASE_URL || "https://suarify1.my";
+const BASE_URL = process.env.SUARIFY_BASE_URL || "https://suarify.my";
 const API_KEY = process.env.SUARIFY_API_KEY;
 
 if (!API_KEY) {
@@ -31,7 +32,7 @@ if (!API_KEY) {
 
 // --- Server Definition ---
 const mcp = new FastMCP("suarify-mcp-server", {
-    version: "1.1.0"
+    version: "0.1.1"
 });
 
 const apiClient = axios.create({

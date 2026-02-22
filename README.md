@@ -12,7 +12,7 @@ This is a Model Context Protocol (MCP) server for Suarify, providing tools for A
 ## Prerequisites
 
 - Node.js 20+
-- [Suarify](https://suarify1.my) API Key
+- [Suarify](https://suarify.my) API Key
 
 ## Configuration
 
@@ -20,6 +20,35 @@ Set the following environment variables:
 
 - `SUARIFY_API_KEY`: (Required) Your API key for authentication.
 - `SUARIFY_BASE_URL`: (Optional) Defaults to `https://suarify1.my`.
+
+## Setup in AI Clients
+
+### Claude Desktop
+
+Add the following to your `claude_desktop_config.json` (usually located in `%APPDATA%\Claude\claude_desktop_config.json` on Windows or `~/Library/Application Support/Claude/claude_desktop_config.json` on macOS):
+
+```json
+{
+  "mcpServers": {
+    "suarify": {
+      "command": "npx",
+      "args": ["-y", "suarify-mcp-server"],
+      "env": {
+        "SUARIFY_API_KEY": "your_api_key_here"
+      }
+    }
+  }
+}
+```
+
+### Cursor
+
+1. Go to **Settings** -> **Features** -> **MCP**.
+2. Click **+ Add New MCP Server**.
+3. Name: `Suarify`.
+4. Type: `command`.
+5. Command: `npx -y suarify-mcp-server`.
+6. Add environment variable `SUARIFY_API_KEY` with your key.
 
 ## Usage
 
