@@ -20,25 +20,37 @@ Suarify is an AI voice automation platform for building and routing SIP-integrat
 
 Set the following environment variables:
 
-- `SUARIFY_API_KEY`: (Required) Your API key for authentication. Register free account credit at https://suarify.my/register-new-user
-- `SUARIFY_BASE_URL`: (Optional) Defaults to `https://suarify.my`.
+- `SUARIFY_API_KEY`: (Required) Your API key for authentication. Register free account credit at `https://suarify.my/register-new-user` and then `developer portal`
+- `SUARIFY_BASE_URL`: (Optional) Defaults to `https://suarify1.my`.
 
 ## Setup in AI Clients
 ### Common mcp (cursor, codex, claudecode ,etc)
 
-Add the following to your `~/.mcp/config.json` 
+Add the following to your `~/.mcp/config.json` or equivalent IDE( antigravity, cursor, codex, claudecode ,etc) or terminal cli
 
 ### Claude Desktop
 
 Add the following to your `claude_desktop_config.json` (usually located in `%APPDATA%\Claude\claude_desktop_config.json` on Windows or `~/Library/Application Support/Claude/claude_desktop_config.json` on macOS):
 
+```
+export SUARIFY_BASE_URL="https://suarify1.my"
+export SUARIFY_API_KEY="sk_suarify_xxxxx_c2U5vTQ2MEfaMm8Iwa8gwN0l"
+
+$env:SUARIFY_BASE_URL = "https://suarify1.my"
+$env:SUARIFY_API_KEY = "sk_suarify_xxxxx_c2U5vTQ2MEfaMm8Iwa8gwN0l"
+
+
+```
 ```json
+
 {
   "mcpServers": {
     "suarify": {
       "command": "npx",
       "args": ["-y", "suarify-mcp-server"],
-      "env": {
+      "env": { 
+        
+        "SUARIFY_BASE_URL": "https://suarify1.my",
         "SUARIFY_API_KEY": "sk_suarify_xxxxx_c2U5vTQ2MEfaMm8Iwa8gwN0l"
       }
     }
@@ -57,6 +69,7 @@ or
         "c:/Users/Acer/OneDrive/Documents/GitHub/suarify-mcp/index.js"
       ],
       "env": {
+        "SUARIFY_BASE_URL": "https://suarify1.my",
         "SUARIFY_API_KEY": "sk_suarify_xxxxx_c2U5vTQ2MEfaMm8Iwa8gwN0l"
       }
     },

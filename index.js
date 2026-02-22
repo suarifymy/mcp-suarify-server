@@ -9,13 +9,23 @@ import url from "url";
 const originalError = console.error;
 
 // Redirect all standard console methods to stderr
+// Note: We do NOT patch process.stdout.write directly because it can break 
+// large JSON messages that are sent in multiple chunks.
 console.log = (...args) => originalError(...args);
 console.info = (...args) => originalError(...args);
 console.warn = (...args) => originalError(...args);
-// Note: We do NOT patch process.stdout.write directly because it can break 
-// large JSON messages that are sent in multiple chunks.
 
-const BASE_URL = process.env.SUARIFY_BASE_URL || "https://suarify.my";
+// Patch process.stdout.write to ensure ONLY JSON messages (likely from FastMCP) go to stdout
+const stdoutWrite = process.stdout.write;
+process.stdout.write = function (chunk) {
+    const str = chunk.toString();
+    if (str.trim().startsWith('{') || str.trim().startsWith('[')) {
+        return stdoutWrite.apply(process.stdout, arguments);
+    }
+    return process.stderr.write.apply(process.stderr, arguments);
+};
+
+const BASE_URL = process.env.SUARIFY_BASE_URL || "https://suarify1.my";
 const API_KEY = process.env.SUARIFY_API_KEY;
 
 if (!API_KEY) {
@@ -25,7 +35,7 @@ if (!API_KEY) {
 // --- Server Definition ---
 const mcp = new FastMCP({
     name: "suarify-mcp-server",
-    version: "0.1.5",
+    version: "0.1.7",
     instructions: "This server provides tools for interacting with the Suarify voice calling platform. Use these tools to initiate AI-powered phone calls, manage leads, and configure agent settings. Requires a valid SUARIFY_API_KEY environment variable."
 });
 
