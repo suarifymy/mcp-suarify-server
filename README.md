@@ -1,7 +1,9 @@
 # Suarify MCP Server
-
+![Suarify Logo](https://suarify.my/logo.png)
 This is a Model Context Protocol (MCP) server for Suarify, providing tools for AI agents to interact with Suarify's voice calling and lead management platform.
 
+
+Suarify is an AI voice automation platform for building and routing SIP-integrated conversational agents via programmable endpoints which allows platform to configure AI inbound and outbound calls.
 ## Features
 
 - **Voice Calls**: Initiate outbound calls and configure inbound settings.
@@ -18,10 +20,13 @@ This is a Model Context Protocol (MCP) server for Suarify, providing tools for A
 
 Set the following environment variables:
 
-- `SUARIFY_API_KEY`: (Required) Your API key for authentication.
-- `SUARIFY_BASE_URL`: (Optional) Defaults to `https://suarify.my`.
+- `SUARIFY_API_KEY`: (Required) Your API key for authentication. Register free account credit at https://suarify.my/register-new-user
+- `SUARIFY_BASE_URL`: (Optional) Defaults to `https://suarify1.my`.
 
 ## Setup in AI Clients
+### Common mcp (cursor, codex, claudecode ,etc)
+
+Add the following to your `~/.mcp/config.json` 
 
 ### Claude Desktop
 
@@ -78,6 +83,25 @@ Add the following to your `claude_desktop_config.json` (usually located in `%APP
 2. **Run the container**:
    ```bash
    docker run -e SUARIFY_API_KEY=your_key_here suarify-mcp
+   ```
+
+3. **Run the container as mcp server**:
+   ```bash
+{
+  "mcpServers": {
+    "suarify-mcp": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "SUARIFY_API_KEY=your_key_here",
+        "suarify-mcp"
+      ]
+    }
+  }
+}
    ```
 
 ## Tools Overview

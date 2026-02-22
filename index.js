@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 import { FastMCP } from "fastmcp";
 import axios, { AxiosError } from "axios";
 import { z } from "zod";
@@ -23,7 +22,7 @@ process.stdout.write = function (chunk) {
     return process.stderr.write.apply(process.stderr, arguments);
 };
 
-const BASE_URL = process.env.SUARIFY_BASE_URL || "https://suarify.my";
+const BASE_URL = process.env.SUARIFY_BASE_URL || "https://suarify1.my";
 const API_KEY = process.env.SUARIFY_API_KEY;
 
 if (!API_KEY) {
@@ -33,7 +32,7 @@ if (!API_KEY) {
 // --- Server Definition ---
 const mcp = new FastMCP({
     name: "suarify-mcp-server",
-    version: "0.1.2",
+    version: "0.1.3",
     instructions: "This server provides tools for interacting with the Suarify voice calling platform. Use these tools to initiate AI-powered phone calls, manage leads, and configure agent settings. Requires a valid SUARIFY_API_KEY environment variable."
 });
 
@@ -66,16 +65,26 @@ function formatError(error) {
             msg += ` - ${JSON.stringify(data)}`;
         }
         return {
-            isError: true,
             content: [{ type: "text", text: msg }],
-            structuredContent: { error: msg, status, data }
+            isError: true
         };
     }
     const msg = `Unexpected Error: ${error instanceof Error ? error.message : String(error)}`;
     return {
-        isError: true,
         content: [{ type: "text", text: msg }],
-        structuredContent: { error: msg }
+        isError: true
+    };
+}
+
+/**
+ * Formats a successful response for FastMCP.
+ * It includes both a human-readable summary and the raw JSON data in the same text block
+ * to ensure the LLM has access to all details while satisfying FastMCP's schema.
+ */
+function formatSuccess(message, data) {
+    const text = `${message}\n\n### Raw Data (JSON):\n\`\`\`json\n${JSON.stringify(data, null, 2)}\n\`\`\``;
+    return {
+        content: [{ type: "text", text }]
     };
 }
 
@@ -84,157 +93,106 @@ export const handlers = {
     setupInboundSettings: async (args) => {
         try {
             const response = await apiClient.post("/inbound-phone-settings", args);
-            return {
-                content: [{ type: "text", text: `Inbound settings configured for ${args.phonenumber}` }],
-                structuredContent: response.data
-            };
+            return formatSuccess(`Inbound settings configured for ${args.phonenumber}`, response.data);
         } catch (e) { return formatError(e); }
     },
     getInboundSettings: async (args) => {
         try {
             const response = await apiClient.get("/inbound-phone-settings", { params: args });
-            return {
-                content: [{ type: "text", text: JSON.stringify(response.data, null, 2) }],
-                structuredContent: response.data
-            };
+            return formatSuccess("Retrieved inbound call settings.", response.data);
         } catch (e) { return formatError(e); }
     },
     setupPhoneConfiguration: async (args) => {
         try {
             const response = await apiClient.post("/api/phone-configuration", args);
-            return {
-                content: [{ type: "text", text: `Phone configuration upserted for token: ${args.tokenid}` }],
-                structuredContent: response.data
-            };
+            return formatSuccess(`Phone configuration upserted for token: ${args.tokenid}`, response.data);
         } catch (e) { return formatError(e); }
     },
     getPhoneConfiguration: async (args) => {
         try {
             const response = await apiClient.get("/api/phone-configuration", { params: args });
-            return {
-                content: [{ type: "text", text: JSON.stringify(response.data, null, 2) }],
-                structuredContent: response.data
-            };
+            return formatSuccess("Retrieved phone configurations.", response.data);
         } catch (e) { return formatError(e); }
     },
     initiateCall: async (args) => {
         try {
             const response = await apiClient.post("/api/call", args);
-            return {
-                content: [{ type: "text", text: `Call initiated: ${JSON.stringify(response.data)}` }],
-                structuredContent: response.data
-            };
+            return formatSuccess("Call initiated successfully.", response.data);
         } catch (e) { return formatError(e); }
     },
     doOutboundCall: async (args) => {
         try {
             const response = await apiClient.post("/do-outbound-phone-call", args);
-            return {
-                content: [{ type: "text", text: `Outbound call executed: ${JSON.stringify(response.data)}` }],
-                structuredContent: response.data
-            };
+            return formatSuccess("Outbound call executed.", response.data);
         } catch (e) { return formatError(e); }
     },
     getOutboundCallLogs: async (args) => {
         try {
             const response = await apiClient.get("/api/outbound-call-logs", { params: args });
-            return {
-                content: [{ type: "text", text: `Retrieved ${response.data?.length || 0} outbound logs.` }],
-                structuredContent: response.data
-            };
+            return formatSuccess(`Retrieved ${response.data?.length || 0} outbound logs.`, response.data);
         } catch (e) { return formatError(e); }
     },
     getInboundCallLogs: async (args) => {
         try {
             const response = await apiClient.get("/api/inbound-call-logs", { params: args });
-            return {
-                content: [{ type: "text", text: `Retrieved ${response.data?.length || 0} inbound logs.` }],
-                structuredContent: response.data
-            };
+            return formatSuccess(`Retrieved ${response.data?.length || 0} inbound logs.`, response.data);
         } catch (e) { return formatError(e); }
     },
     listUserAgents: async (args) => {
         try {
             const response = await apiClient.get("/api/user-agents", { params: args });
-            return {
-                content: [{ type: "text", text: `Retrieved ${response.data?.length || 0} user agents.` }],
-                structuredContent: response.data
-            };
+            return formatSuccess(`Retrieved ${response.data?.length || 0} user agents.`, response.data);
         } catch (e) { return formatError(e); }
     },
     getUserAgent: async (args) => {
         try {
             const { id, ...params } = args;
             const response = await apiClient.get(`/api/user-agents/${id}`, { params });
-            return {
-                content: [{ type: "text", text: JSON.stringify(response.data, null, 2) }],
-                structuredContent: response.data
-            };
+            return formatSuccess(`Details for user agent ${id}.`, response.data);
         } catch (e) { return formatError(e); }
     },
     deleteUserAgent: async (args) => {
         try {
             const { id, ...params } = args;
             const response = await apiClient.delete(`/api/user-agents/${id}`, { params });
-            return {
-                content: [{ type: "text", text: `User agent ${id} deleted.` }],
-                structuredContent: response.data
-            };
+            return formatSuccess(`User agent ${id} deleted.`, response.data);
         } catch (e) { return formatError(e); }
     },
     createLead: async (args) => {
         try {
             const response = await apiClient.post("/api/user-leads", args);
-            return {
-                content: [{ type: "text", text: `Lead created for ${args.receipient_name}` }],
-                structuredContent: response.data
-            };
+            return formatSuccess(`Lead created for ${args.receipient_name}`, response.data);
         } catch (e) { return formatError(e); }
     },
     bulkUploadLeads: async (args) => {
         try {
             const response = await apiClient.post("/api/user-leads/bulk", args);
-            return {
-                content: [{ type: "text", text: `Bulk upload processed: ${JSON.stringify(response.data)}` }],
-                structuredContent: response.data
-            };
+            return formatSuccess("Bulk upload processed.", response.data);
         } catch (e) { return formatError(e); }
     },
     listLeads: async (args) => {
         try {
             const response = await apiClient.get("/api/user-leads", { params: args });
-            return {
-                content: [{ type: "text", text: `Retrieved ${response.data?.length || 0} leads.` }],
-                structuredContent: response.data
-            };
+            return formatSuccess(`Retrieved ${response.data?.length || 0} leads.`, response.data);
         } catch (e) { return formatError(e); }
     },
     getLead: async (args) => {
         try {
             const response = await apiClient.get(`/api/user-leads/${args.id}`);
-            return {
-                content: [{ type: "text", text: JSON.stringify(response.data, null, 2) }],
-                structuredContent: response.data
-            };
+            return formatSuccess(`Details for lead ${args.id}.`, response.data);
         } catch (e) { return formatError(e); }
     },
     updateLead: async (args) => {
         try {
             const { id, ...data } = args;
             const response = await apiClient.patch(`/api/user-leads/${id}`, data);
-            return {
-                content: [{ type: "text", text: `Lead ${id} updated.` }],
-                structuredContent: response.data
-            };
+            return formatSuccess(`Lead ${id} updated.`, response.data);
         } catch (e) { return formatError(e); }
     },
     deleteLead: async (args) => {
         try {
             const response = await apiClient.delete(`/api/user-leads/${args.id}`);
-            return {
-                content: [{ type: "text", text: `Lead ${args.id} deleted.` }],
-                structuredContent: response.data
-            };
+            return formatSuccess(`Lead ${args.id} deleted.`, response.data);
         } catch (e) { return formatError(e); }
     },
 };
