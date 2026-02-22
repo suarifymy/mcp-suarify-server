@@ -21,7 +21,7 @@ Suarify is an AI voice automation platform for building and routing SIP-integrat
 Set the following environment variables:
 
 - `SUARIFY_API_KEY`: (Required) Your API key for authentication. Register free account credit at https://suarify.my/register-new-user
-- `SUARIFY_BASE_URL`: (Optional) Defaults to `https://suarify1.my`.
+- `SUARIFY_BASE_URL`: (Optional) Defaults to `https://suarify.my`.
 
 ## Setup in AI Clients
 ### Common mcp (cursor, codex, claudecode ,etc)

@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { FastMCP } from "fastmcp";
 import axios, { AxiosError } from "axios";
 import { z } from "zod";
@@ -22,7 +23,7 @@ process.stdout.write = function (chunk) {
     return process.stderr.write.apply(process.stderr, arguments);
 };
 
-const BASE_URL = process.env.SUARIFY_BASE_URL || "https://suarify1.my";
+const BASE_URL = process.env.SUARIFY_BASE_URL || "https://suarify.my";
 const API_KEY = process.env.SUARIFY_API_KEY;
 
 if (!API_KEY) {
@@ -32,7 +33,7 @@ if (!API_KEY) {
 // --- Server Definition ---
 const mcp = new FastMCP({
     name: "suarify-mcp-server",
-    version: "0.1.3",
+    version: "0.1.5",
     instructions: "This server provides tools for interacting with the Suarify voice calling platform. Use these tools to initiate AI-powered phone calls, manage leads, and configure agent settings. Requires a valid SUARIFY_API_KEY environment variable."
 });
 
@@ -348,8 +349,6 @@ mcp.addTool({
 
 export { mcp, apiClient };
 
-if (import.meta.url === url.pathToFileURL(process.argv[1]).href) {
-    mcp.start({
-        transportType: "stdio",
-    });
-}
+mcp.start({
+    transportType: "stdio",
+});
