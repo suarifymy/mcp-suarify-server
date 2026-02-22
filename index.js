@@ -12,16 +12,8 @@ const originalError = console.error;
 console.log = (...args) => originalError(...args);
 console.info = (...args) => originalError(...args);
 console.warn = (...args) => originalError(...args);
-
-// Patch process.stdout.write to ensure ONLY JSON messages (likely from FastMCP) go to stdout
-const stdoutWrite = process.stdout.write;
-process.stdout.write = function (chunk) {
-    const str = chunk.toString();
-    if (str.trim().startsWith('{') || str.trim().startsWith('[')) {
-        return stdoutWrite.apply(process.stdout, arguments);
-    }
-    return process.stderr.write.apply(process.stderr, arguments);
-};
+// Note: We do NOT patch process.stdout.write directly because it can break 
+// large JSON messages that are sent in multiple chunks.
 
 const BASE_URL = process.env.SUARIFY_BASE_URL || "https://suarify.my";
 const API_KEY = process.env.SUARIFY_API_KEY;
